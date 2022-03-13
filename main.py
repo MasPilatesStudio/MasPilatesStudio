@@ -7,5 +7,5 @@ def hello():
     print('Hello, World!')
     return jsonify({'message':'Hello'})
 
-if __name__=="__main__":
-    app.run(debug==True)
+# if __name__=="__main__":
+#     app.run(debug==True)
