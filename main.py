@@ -10,7 +10,7 @@ from src.blueprints import create_app
 app = create_app()
 
 CORS(app, resources={r'/*': {'origins': '*'}})
-app.run()
+# app.run()
 # @app.route('/', methods=['GET'])
 # def main():
 #     print('Hello, World!')
