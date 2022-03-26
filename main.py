@@ -7,7 +7,7 @@ from src.blueprints import create_app
 
 # app = Flask(src.__name__, instance_relative_config=False)
 # app = create_app('default')
-app = create_app('production')
+app = create_app()
 
 CORS(app, resources={r'/*': {'origins': '*'}})
 app.run()
