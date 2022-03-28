@@ -2,9 +2,9 @@ from urllib import response
 from flask import jsonify
 
 def make_error(status_code, message=None):
-  response = jsonify({
-    'status': status_code,
-    'message': message
-  })
-  response.status_code = status_code
-  return response
+    response = jsonify({
+        'status': status_code,
+        'message': message
+    })
+    response.status_code = status_code
+    return response

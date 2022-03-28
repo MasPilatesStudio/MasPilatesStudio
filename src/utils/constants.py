@@ -1,2 +1,1 @@
-
 HTTP_STATUS_500 = 500
