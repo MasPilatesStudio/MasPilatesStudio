@@ -1,9 +1,8 @@
 from flask import Flask
-from config import config
 
 def create_app():
     app = Flask(__name__)
-    # app.config.from_object(config[config_name])
+    app.config['SECRET_KEY'] = 'secret'
 
     # Configuracion de los BluePrints
     from .bp_users import users_bp as user_end_point

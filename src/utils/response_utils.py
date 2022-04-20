@@ -1,4 +1,3 @@
-from urllib import response
 from flask import jsonify
 
 def make_error(status_code, message=None):

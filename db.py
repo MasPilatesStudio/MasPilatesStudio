@@ -13,3 +13,9 @@ def get_engine():
         return conexion
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
+
+def serialize(column_names, res):
+    d = {}
+    for index in range(0,len(column_names)):
+        d[column_names[index]] = res[index]
+    return d
