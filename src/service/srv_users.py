@@ -20,17 +20,18 @@ def register_user(user):
     if exist == True:
         return "El usuario ya existe"
     if exist == False:
-        print(exist)
         return ctrl_users.add_user(user['email'], user['name'], user['password'])
 
 
 def login(user):
     response = ctrl_users.get_user(user['email'])
     if response != 'Usuario no encontrado' and response != None:
-        print('Entra al if')
         if check_password_hash(response['password'], user['password']):
             session['email'] = user['email']
             session['rol'] = response['rol']
             aux = User.generate_auth_token(response['email'])
-            print(aux)
-    return aux
+            return aux
+        else:
+            return 'Incorrect password'
+    else:
+        return 'Invalid credentials'
