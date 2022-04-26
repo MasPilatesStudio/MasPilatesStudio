@@ -1,3 +1,4 @@
+from urllib import response
 from flask import Blueprint, jsonify, request, session
 from src.utils.response_utils import make_error
 from src.utils import constants
@@ -17,12 +18,12 @@ def register_user():
         return make_error(constants.HTTP_STATUS_500, message=e)
 
 
-@users_bp.route('login', methods=['GET'])
+@users_bp.route('login', methods=['POST'])
 def login():
     try:
         user = request.json.get('user')
-        token = srv_users.login(user)
-        return jsonify( {'response': token} )
+        response = srv_users.login(user)
+        return jsonify( {'response': response} )
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
 

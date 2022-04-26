@@ -1,3 +1,4 @@
+from lib2to3.pgen2 import token
 from src.model.User import User
 from werkzeug.security import check_password_hash
 from src.controllers import ctrl_users
@@ -29,8 +30,13 @@ def login(user):
         if check_password_hash(response['password'], user['password']):
             session['email'] = user['email']
             session['rol'] = response['rol']
-            aux = User.generate_auth_token(response['email'])
-            return aux
+            token = User.generate_auth_token(response['email'])
+            user = {
+                'email': user['email'],
+                'rol': response['rol'],
+                'token': token
+            }
+            return user
         else:
             return 'Incorrect password'
     else:
