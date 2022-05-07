@@ -1,4 +1,3 @@
-from urllib import response
 from flask import Blueprint, jsonify, request, session
 from src.utils.response_utils import make_error
 from src.utils import constants
@@ -39,44 +38,10 @@ def logout():
 
 
 def get_user_email():
+    print('get_user_email' + session['email'])
     email = session['email']
     return str(email)
 
 def get_user_rol():
     rol = session['rol']
     return str(rol)
-
-# @users_bp.route("/")
-# @auth.login_required
-# def index():
-#     return jsonify({ 'user': g.user.username })
-
-# @users_bp.route('users', methods=['GET'])
-# def get_users():
-#     try:
-#         print('Hello, World!')
-#         response = srv_users.get_users()
-
-#         return jsonify({ 'message': response })
-#     except BaseException as e:
-#         return make_error(constants.HTTP_STATUS_500, message=e)
-
-
-# @users_bp.route('/api/login')
-# @auth.login_required
-# def get_auth_token():
-#     token = g.user.generate_auth_token()
-#     return jsonify(token)
-
-# @auth.verify_password
-# def verify_password(username_or_token, password):
-#     if request.path == "/api/login":
-#         response = srv_users.get_user(username_or_token)
-#         if not response or not response.verify_password(password):
-#             return False
-#     else:
-#         user = User.User.verify_auth_token(username_or_token)
-#         if not user:
-#             return False
-#     g.user = user
-#     return True

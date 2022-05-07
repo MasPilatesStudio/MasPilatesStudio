@@ -1,3 +1,4 @@
+from traceback import print_tb
 import psycopg2
 from config import config
 
@@ -19,3 +20,10 @@ def serialize(column_names, res):
     for index in range(0,len(column_names)):
         d[column_names[index]] = res[index]
     return d
+
+def serialize_array(column_names, response):
+    aux = []
+    for result in response:
+        response = serialize(column_names, result)
+        aux.append(response)
+    return aux

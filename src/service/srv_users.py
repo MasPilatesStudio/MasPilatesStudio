@@ -1,8 +1,7 @@
-from lib2to3.pgen2 import token
 from src.model.User import User
 from werkzeug.security import check_password_hash
 from src.controllers import ctrl_users
-from flask import session
+from flask import session, g
 
 def get_users():
     response = ctrl_users.get_users()
