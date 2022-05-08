@@ -5,7 +5,10 @@ def get_schedule():
   response = ctrl_calendar.get_schedule()
   return response
 
-def book_class(data, email):
-  print('email: ' + email)
-  response = ctrl_calendar.book_class(data['name'], data['start'],data['end'], email)
+def book_class(book, email):
+  response = ctrl_calendar.book_class(book['name'], book['start'],book['end'], email)
+  return response
+
+def get_bookings(email):
+  response = ctrl_calendar.get_bookings(email)
   return response

@@ -16,15 +16,25 @@ def get_schedule():
         return make_error(constants.HTTP_STATUS_500, message=e)
 
 @calendar_bp.route('book_class', methods=['POST'])
-@decorators.check_user(['Employee', 'Client', 'Administrator'])
 def book_class():
     try:
         print('🚀 book_class - bp_calendar' )
         book = request.json.get('book')
-        email = g.email
         print(book)
+        email = request.json.get('email')
         response = srv_calendar.book_class(book, email)
         print(response)
         return jsonify({ 'response': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
+@calendar_bp.route('get_bookings/<email>', methods=['GET'])
+def get_bookings(email):
+    try:
+        print('🚀 get_bookings - bp_calendar' )
+        print(email)
+        response = srv_calendar.get_bookings(email)
+        print(response)
+        return jsonify({ 'Items': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
