@@ -43,3 +43,12 @@ def get_people_per_class():
         return jsonify({ 'Items': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
+
+@calendar_bp.route('get_people_booked', methods=['GET'])
+def get_people_booked():
+    try:
+        print('🚀 get_people_booked - bp_calendar' )
+        response = srv_calendar.get_people_booked()
+        return jsonify({ 'Items': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)

@@ -16,3 +16,7 @@ def get_bookings(email):
 def get_people_per_class():
   response = ctrl_calendar.get_people_per_class()
   return response
+
+def get_people_booked():
+  response = ctrl_calendar.get_people_booked()
+  return response
