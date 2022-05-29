@@ -14,5 +14,6 @@ def create_app():
     app.register_blueprint(user_end_point)
     from .bp_calendar import calendar_bp as calendar_end_point
     app.register_blueprint(calendar_end_point)
-
+    from .bp_shop import shop_bp as shop_end_point
+    app.register_blueprint(shop_end_point)
     return app
