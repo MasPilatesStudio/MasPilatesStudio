@@ -11,12 +11,15 @@ def get_products(filters):
             query += ' AND category = \'' + filters['category'] + '\''
         if filters['search'] != '':
             query += ''' AND lower(name) LIKE '%''' + filters['search'].lower() + '''%' '''
+        if len(filters['brands']) > 0:
+            string_brands = "', '".join([str(elem) for elem in filters['brands']])
+            query += " AND (brand is null or brand in ('" + string_brands + "'))"
         if filters['order'] == 'asc':
-            query += ' ORDER BY price asc'
+            query += ' ORDER BY price::DECIMAL asc'
         if filters['order'] == 'desc':
-            query += ' ORDER BY price desc'
+            query += ' ORDER BY price::DECIMAL desc'
         elif filters['order'] == None:
-            query+= ' ORDER BY id desc'
+            query += ' ORDER BY id desc'
         print(query)
         cur.execute(query)
         response = cur.fetchall()
