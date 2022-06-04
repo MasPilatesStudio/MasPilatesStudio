@@ -11,3 +11,11 @@ def get_categories():
 def get_brands():
   response = ctrl_shop.get_brands()
   return response
+
+def get_shopping_cart(email):
+  response = ctrl_shop.get_shopping_cart(email)
+  return response
+
+def add_to_shopping_cart(email, productId):
+  response = ctrl_shop.add_to_shopping_cart(email, productId)
+  return response

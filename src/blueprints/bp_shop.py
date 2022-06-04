@@ -1,3 +1,4 @@
+from itertools import product
 from flask import Blueprint, jsonify, request
 from src.utils.response_utils import make_error
 from src.utils import constants
@@ -30,5 +31,25 @@ def get_brands():
         print('🚀 get_brands - bp_shop' )
         response = srv_shop.get_brands()
         return jsonify({ 'Items': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
+@shop_bp.route('get_shopping_cart/<email>', methods=['GET'])
+def get_shopping_cart(email):
+    try:
+        print('🚀 get_brands - bp_shop' )
+        response = srv_shop.get_shopping_cart(email)
+        return jsonify({ 'Items': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
+@shop_bp.route('add_to_shopping_cart', methods=['POST'])
+def add_to_shopping_cart():
+    try:
+        print('🚀 get_brands - bp_shop' )
+        productId = request.json.get('productId')
+        email = request.json.get('email')
+        response = srv_shop.add_to_shopping_cart(email, productId)
+        return jsonify({ 'message': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
