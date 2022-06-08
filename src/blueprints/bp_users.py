@@ -17,6 +17,27 @@ def register_user():
         return make_error(constants.HTTP_STATUS_500, message=e)
 
 
+@users_bp.route('update_send_direction', methods=['POST'])
+def update_send_direction():
+    try:
+        print('🚀 register_user - bp_users' )
+        user = request.json.get('user')
+        response = srv_users.update_send_direction(user)
+        return jsonify({ 'response': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
+
+@users_bp.route('get_user/<email>', methods=['GET'])
+def get_user(email):
+    try:
+        print('🚀 register_user - bp_users' )
+        response = srv_users.get_user_data(email)
+        return jsonify({ 'response': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
+
 @users_bp.route('login', methods=['POST'])
 def login():
     try:

@@ -42,6 +42,28 @@ def add_user(email, name, password):
             print('Conexión finalizada.')
 
 
+def update_send_direction(user):
+    try:
+        conexion = db.get_engine()
+        cur = conexion.cursor()
+        query = 'UPDATE users SET province = %s, direction = %s, cp = %s, phone = %s WHERE email = %s'
+        data = (user['province'], user['direction'], user['cp'], user['phone'], user['email'],)
+        cur.execute(query, data)
+        conexion.commit()
+
+        if cur.rowcount > 0:
+            result = 'OK'
+        # Cierre de la comunicación con PostgreSQL
+        cur.close()
+        return result
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+
 def check_exists(email):
     try:
         conexion = db.get_engine()

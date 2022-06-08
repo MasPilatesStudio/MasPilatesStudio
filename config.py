@@ -3,14 +3,18 @@ from configparser import ConfigParser
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
+    URL = os.environ.get('URL')
 
 class Development(Config):
     DEBUG = True
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'clave'
+    URL = 'http://127.0.0.1:5000/'
+
 class Testing(Config):
     TESTING = True
 
 class Production(Config):
+    URL = 'https://maspilatesstudio.herokuapp.com/'
     pass
 
 config = {

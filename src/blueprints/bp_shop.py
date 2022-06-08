@@ -1,8 +1,9 @@
-from itertools import product
 from flask import Blueprint, jsonify, request
 from src.utils.response_utils import make_error
 from src.utils import constants
 from src.service import srv_shop
+import os
+import stripe
 
 shop_bp = Blueprint('shop', __name__, url_prefix='/shop')
 
@@ -53,3 +54,14 @@ def add_to_shopping_cart():
         return jsonify({ 'message': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
+
+@shop_bp.route('/config', methods=['GET'])
+def get_publishable_key():
+    stripe.api_key = stripe_keys['secret_key']
+
+    stripe_keys = {
+        'secret_key': os.environ['STRIPE_SECRET_KEY'],
+        'publishable_key': os.environ['STRIPE_PUBLISHABLE_KEY'],
+    }
+    stripe_config = {'publicKey': stripe_keys['publishable_key']}
+    return jsonify(stripe_config)

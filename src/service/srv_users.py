@@ -13,6 +13,11 @@ def get_user(email):
     user = User(response['email'], response['name'], response['password'])
     return user
 
+def get_user_data(email):
+    response = ctrl_users.get_user(email)
+    del response['password']
+    return response
+
 
 def register_user(user):
     # Ver si el usuario ya existe
@@ -21,6 +26,9 @@ def register_user(user):
         return "El usuario ya existe"
     if exist == False:
         return ctrl_users.add_user(user['email'], user['name'], user['password'])
+
+def update_send_direction(user):
+    return ctrl_users.update_send_direction(user)
 
 
 def login(user):
