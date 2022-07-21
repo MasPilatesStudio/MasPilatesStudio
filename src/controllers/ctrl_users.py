@@ -44,9 +44,13 @@ def add_user(email, name, password):
 
 def update_send_direction(user):
     try:
+        update_query = ''
+        if user['name']:
+            update_query = ', name = \'' + user['name'] + '\''
         conexion = db.get_engine()
         cur = conexion.cursor()
-        query = 'UPDATE users SET province = %s, direction = %s, cp = %s, phone = %s WHERE email = %s'
+        query = 'UPDATE users SET province = %s, direction = %s, cp = %s, phone = %s ' + update_query + ' WHERE email = %s'
+        print(query)
         data = (user['province'], user['direction'], user['cp'], user['phone'], user['email'],)
         cur.execute(query, data)
         conexion.commit()

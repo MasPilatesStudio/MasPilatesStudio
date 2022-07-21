@@ -12,7 +12,18 @@ def get_products():
     try:
         print('🚀 get_products - bp_shop' )
         filters = request.json.get('filters')
-        response = srv_shop.get_products(filters)
+        current_page = request.json.get('currentPage')
+        per_page = request.json.get('perPage')
+        response = srv_shop.get_products(filters, current_page, per_page)
+        return jsonify({ 'Items': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
+@shop_bp.route('get_count_products', methods=['GET'])
+def get_count_products():
+    try:
+        print('🚀 get_count_products - bp_shop' )
+        response = srv_shop.get_count_products()
         return jsonify({ 'Items': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)

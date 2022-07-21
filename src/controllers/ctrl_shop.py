@@ -2,7 +2,7 @@ import psycopg2
 import psycopg2.extras
 import db
 
-def get_products(filters):
+def get_products(filters, current_page, per_page):
     try:
         conexion = db.get_engine()
         cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -20,13 +20,36 @@ def get_products(filters):
             query += ' ORDER BY price::DECIMAL desc'
         elif filters['order'] == None:
             query += ' ORDER BY id desc'
-        print(query)
+        query += ' LIMIT ' + str(per_page) + ' OFFSET ' + str(((current_page -1) * per_page) )
         cur.execute(query)
         response = cur.fetchall()
 
         if cur.rowcount > 0:
             column_names = [desc[0] for desc in cur.description]
             response = db.serialize_array(column_names, response)
+        else:
+            response = 'No hay registros'
+        # Cierre de la comunicación con PostgreSQL
+        cur.close()
+        return response
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+def get_count_products():
+    try:
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = '''SELECT COUNT(*) FROM articles WHERE xti_activo = 'S' '''
+        cur.execute(query)
+        response = cur.fetchall()
+
+        aux = []
+        if cur.rowcount > 0:
+            response = response[0][0]
         else:
             response = 'No hay registros'
         # Cierre de la comunicación con PostgreSQL

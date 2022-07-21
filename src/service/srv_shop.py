@@ -1,7 +1,11 @@
 from src.controllers import ctrl_shop
 
-def get_products(filters):
-  response = ctrl_shop.get_products(filters)
+def get_products(filters, current_page, per_page):
+  response = ctrl_shop.get_products(filters, current_page, per_page)
+  return response
+
+def get_count_products():
+  response = ctrl_shop.get_count_products()
   return response
 
 def get_categories():
