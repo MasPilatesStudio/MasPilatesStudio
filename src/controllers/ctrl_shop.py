@@ -167,3 +167,108 @@ def get_shopping_cart(email):
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
+
+
+def get_count_shopping_cart(email):
+    try:
+        print(email)
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = """ SELECT SUM(c.quantity ) AS cantidad_total
+                    FROM "shoppingCart" c
+                    INNER JOIN users u ON c.email = u.email
+                    WHERE c.email = %s
+                    GROUP BY c.email """
+        data = (email,)
+        cur.execute(query, data)
+        response = cur.fetchall()
+        print(response)
+        if cur.rowcount > 0:
+            response = response[0][0]
+        else:
+            response = '0'
+        # Cierre de la comunicación con PostgreSQL
+        cur.close()
+        return response
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+
+def add_order (email, products):
+    try:
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = ''' INSERT INTO "order" ("id_user", "date", "state")
+                    VALUES (%s, current_timestamp, 'ESPERA') RETURNING id'''
+        data = (email,)
+        cur.execute(query, data)
+        id_order = cur.fetchone()[0]
+        print(id_order)
+        print('Insert orderLine')
+
+        query = ''' INSERT INTO "orderLine" (id_order, id_article, amount, quantity, line)
+                    VALUES (%s, %s, %s, %s, %s)'''
+        for i in range(len(products)):
+            data = (id_order, products[i]['id'], products[i]['price'], products[i]['quantity'], i,)
+            cur.execute(query, data)
+            print('Inserted orderLine')
+
+        query = ''' DELETE FROM "shoppingCart" WHERE email = %s '''
+        data = (email,)
+        cur.execute(query, data)
+
+        conexion.commit()
+        if cur.rowcount > 0:
+            response = 'OK'
+        else:
+            response = 'ERROR'
+        # Cierre de la comunicación con PostgreSQL
+        cur.close()
+        return response
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+
+def get_order_by_user(email):
+    try:
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = """ SELECT o.id,
+                    string_agg(concat(lp.quantity::VARCHAR(4), ' ', a.name), ', ') AS articulos,
+                    SUM(lp.amount * lp.quantity) AS precio_total,
+                    u.direction,
+                    to_char(o.date, 'DD/MM/YYYY') AS fecha,
+                    o.state
+                    FROM order o
+                    INNER JOIN orderLine lp ON o.id = lp.id_order
+                    INNER JOIN articles a ON lp.id_article = a.id
+                    INNER JOIN users u ON o.id_user = u.email
+                    WHERE u.email = :email
+                    GROUP BY o.id, u.email
+                    ORDER BY o.date desc """
+        data = (email,)
+        cur.execute(query, data)
+        response = cur.fetchall()
+
+        if cur.rowcount > 0:
+            column_names = [desc[0] for desc in cur.description]
+            response = db.serialize_array(column_names, response)
+        else:
+            response = 'No hay registros'
+        # Cierre de la comunicación con PostgreSQL
+        cur.close()
+        return response
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
