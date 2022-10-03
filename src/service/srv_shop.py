@@ -1,6 +1,8 @@
 from src.controllers import ctrl_shop
 import stripe
 
+stripe.api_key = 'sk_test_51L8UuqJgo7zTVCqcDcPNe68hbsuHs3d8gSsF2EbaeX0nms5O32lZA9pV73MJV2OOCueBL5tHKSoTtkiMnS3TAnFZ00n4X1M7Jx'
+
 def get_products(filters, current_page, per_page):
     response = ctrl_shop.get_products(filters, current_page, per_page)
     return response
@@ -35,19 +37,39 @@ def get_order_by_user(email):
 
 def add_order(email, products):
     response = ctrl_shop.add_order(email, products)
+    amount = 0
+    for product in products:
+        amount += float(product['price'])
     intent = None
     if response == 'OK':
-        intent = stripe.PaymentIntent.create(
-            amount=_calculate_order_amount(products),
-            currency='eur',
-            automatic_payment_methods={
-                'enabled': True,
-            },
-            success_url='success',
-            cancel_url='cancel',
-        )
-        print(intent.url)
-    return intent.url
+        try:
+            intent = stripe.checkout.Session.create(
+                success_url='https://maspilatesstudio-front.herokuapp.com/#//#/shop',
+                cancel_url='https://maspilatesstudio-front.herokuapp.com/#/shoppingCart',
+                payment_method_types=['card'],
+                mode='payment',
+                line_items=[
+                {
+                    'name': 'Compra',
+                    'quantity': 1,
+                    'currency': 'eur',
+                    'amount': round(float(amount) * 100)
+                }]
+            )
+            print(intent)
+            return intent['url']
+        except Exception as e:
+            return str(e)
+
+def add_product(product):
+    response = stripe.Product.create(
+        name=product['name'],
+        description=product['description'],
+        default_price_data={"unit_amount": product['price'] * 100, "currency": "eur"},
+    )
+    print(response)
+    response = ctrl_shop.add_product(product, response['default_price'])
+    return response
 
 def _calculate_order_amount(products):
     total = 0

@@ -272,3 +272,22 @@ def get_order_by_user(email):
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
+
+def add_product(product, id_stripe):
+    try:
+        print('ctrl_shop - add_product - start')
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = ''' INSERT INTO "articles" ("name", "description", "image", "price", "xti_activo", "category", "brand", "id_price_stripe")
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id'''
+        data = (product['name'], product['description'], product['image'], product['price'], 'S', product['category'], product['brand'], id_stripe,)
+        cur.execute(query, data)
+        id_order = cur.fetchone()[0]
+        conexion.commit()
+        return id_order
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')

@@ -83,36 +83,22 @@ def get_order_by_user(email):
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
 
-# @shop_bp.route('/config', methods=['GET'])
-# def get_publishable_key():
-#     stripe.api_key = stripe_keys['secret_key']
-
-#     stripe_keys = {
-#         'secret_key': os.environ['STRIPE_SECRET_KEY'],
-#         'publishable_key': os.environ['STRIPE_PUBLISHABLE_KEY'],
-#     }
-#     stripe_config = {'publicKey': stripe_keys['publishable_key']}
-#     return jsonify(stripe_config)
-
 @shop_bp.route('/add_order', methods=['POST'])
 def create_checkout_session():
     try:
-        # checkout_session = stripe.checkout.Session.create(
-        #     line_items=[
-        #         {
-        #             # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        #             'price': 'price_1LOhZ9Jgo7zTVCqcRr6yuKCf',
-        #             'quantity': 1,
-        #         },
-        #     ],
-        #     mode='payment',
-        #     success_url='success',
-        #     cancel_url='cancel',
-        # )
         # Create a PaymentIntent with the order amount and currency
         email = request.json.get('email')
         products = request.json.get('products')
         response = srv_shop.add_order(email, products)
+        return jsonify({ 'sessionId': response })
+    except Exception as e:
+        return str(e)
+
+@shop_bp.route('/add_product', methods=['POST'])
+def add_product():
+    try:
+        product = request.json.get('product')
+        response = srv_shop.add_product(product)
         return jsonify({ 'message': response })
     except Exception as e:
         return str(e)
