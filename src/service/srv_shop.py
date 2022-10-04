@@ -44,7 +44,7 @@ def add_order(email, products):
     if response == 'OK':
         try:
             intent = stripe.checkout.Session.create(
-                success_url='https://maspilatesstudio-front.herokuapp.com/#//#/shop',
+                success_url='https://maspilatesstudio-front.herokuapp.com/#/shop',
                 cancel_url='https://maspilatesstudio-front.herokuapp.com/#/shoppingCart',
                 payment_method_types=['card'],
                 mode='payment',
