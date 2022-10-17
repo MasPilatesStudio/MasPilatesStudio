@@ -65,6 +65,17 @@ def add_to_shopping_cart():
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
 
+@shop_bp.route('delete_product', methods=['PUT'])
+def delete_product():
+    try:
+        print('🚀 delete_product - bp_shop' )
+        productId = request.json.get('product')
+        email = request.json.get('email')
+        response = srv_shop.delete_product(email, productId)
+        return jsonify({ 'message': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
 @shop_bp.route('get_count_shopping_cart/<email>', methods=['GET'])
 def get_count_shopping_cart(email):
     try:

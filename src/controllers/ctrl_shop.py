@@ -169,6 +169,36 @@ def get_shopping_cart(email):
             print('Conexión finalizada.')
 
 
+def delete_product (email, product):
+    try:
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        if product['quantity'] > 0:
+            query = ''' UPDATE "shoppingCart" SET quantity = %s
+                        WHERE id_article = %s AND email = %s '''
+            data = (product['quantity'], product['id'], email,)
+            cur.execute(query, data)
+        else:
+            query = ''' DELETE FROM "shoppingCart"
+                        WHERE id_article = %s AND email = %s '''
+            data = (product['id'], email,)
+            cur.execute(query, data)
+        conexion.commit()
+        if cur.rowcount > 0:
+            response = 'OK'
+        else:
+            response = 'ERROR'
+        # Cierre de la comunicación con PostgreSQL
+        cur.close()
+        return response
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+
 def get_count_shopping_cart(email):
     try:
         print(email)

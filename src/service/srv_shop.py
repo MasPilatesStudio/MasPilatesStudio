@@ -23,6 +23,10 @@ def get_shopping_cart(email):
     response = ctrl_shop.get_shopping_cart(email)
     return response
 
+def delete_product(email, product):
+    response = ctrl_shop.delete_product(email, product)
+    return response
+
 def get_count_shopping_cart(email):
     response = ctrl_shop.get_count_shopping_cart(email)
     return response
@@ -39,7 +43,7 @@ def add_order(email, products):
     response = ctrl_shop.add_order(email, products)
     amount = 0
     for product in products:
-        amount += float(product['price'])
+        amount += float(product['price']) * product['quantity']
     intent = None
     if response == 'OK':
         try:
@@ -62,12 +66,6 @@ def add_order(email, products):
             return str(e)
 
 def add_product(product):
-    response = stripe.Product.create(
-        name=product['name'],
-        description=product['description'],
-        default_price_data={"unit_amount": product['price'] * 100, "currency": "eur"},
-    )
-    print(response)
     response = ctrl_shop.add_product(product, response['default_price'])
     return response
 
