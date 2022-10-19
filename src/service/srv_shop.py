@@ -35,8 +35,8 @@ def add_to_shopping_cart(email, productId):
     response = ctrl_shop.add_to_shopping_cart(email, productId)
     return response
 
-def get_order_by_user(email):
-    response = ctrl_shop.get_order_by_user(email)
+def get_orders(user):
+    response = ctrl_shop.get_orders(user)
     return response
 
 def add_order(email, products):
@@ -69,8 +69,6 @@ def add_product(product):
     response = ctrl_shop.add_product(product, response['default_price'])
     return response
 
-def _calculate_order_amount(products):
-    total = 0
-    for product in products:
-        total += product['price'] * product['quantity']
-    return total
+def change_order_state(order_id, state):
+    response = ctrl_shop.change_order_state(order_id, state)
+    return response

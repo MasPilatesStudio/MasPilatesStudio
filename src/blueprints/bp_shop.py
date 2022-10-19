@@ -85,11 +85,12 @@ def get_count_shopping_cart(email):
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
 
-@shop_bp.route('get_order_by_user/<email>', methods=['GET'])
-def get_order_by_user(email):
+@shop_bp.route('get_orders', methods=['POST'])
+def get_orders():
     try:
         print('🚀 get_brands - bp_shop' )
-        response = srv_shop.get_order_by_user(email)
+        user = request.json.get('user')
+        response = srv_shop.get_orders(user)
         return jsonify({ 'orders': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
@@ -110,6 +111,16 @@ def add_product():
     try:
         product = request.json.get('product')
         response = srv_shop.add_product(product)
+        return jsonify({ 'message': response })
+    except Exception as e:
+        return str(e)
+
+@shop_bp.route('/change_order_state', methods=['POST'])
+def change_order_state():
+    try:
+        order_id = request.json.get('order_id')
+        state = request.json.get('state')
+        response = srv_shop.change_order_state(order_id, state)
         return jsonify({ 'message': response })
     except Exception as e:
         return str(e)

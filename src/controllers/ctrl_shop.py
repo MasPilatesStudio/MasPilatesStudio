@@ -47,7 +47,6 @@ def get_count_products():
         cur.execute(query)
         response = cur.fetchall()
 
-        aux = []
         if cur.rowcount > 0:
             response = response[0][0]
         else:
@@ -267,24 +266,26 @@ def add_order (email, products):
             print('Conexión finalizada.')
 
 
-def get_order_by_user(email):
+def get_orders(user):
     try:
         conexion = db.get_engine()
         cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = """ SELECT o.id,
-                    string_agg(concat(lp.quantity::VARCHAR(4), ' ', a.name), ', ') AS articulos,
-                    SUM(lp.amount * lp.quantity) AS precio_total,
-                    u.direction,
-                    to_char(o.date, 'DD/MM/YYYY') AS fecha,
-                    o.state
-                    FROM order o
-                    INNER JOIN orderLine lp ON o.id = lp.id_order
+        query = ''' SELECT p.id,
+                        string_agg(concat(lp.quantity::VARCHAR(4), ' ', a.name), ', ') AS articles,
+                        SUM(lp.amount::float * lp.quantity) AS total_price,
+                        p.id_user,
+                        u.direction,
+                        to_char(p.date, 'DD/MM/YYYY') AS date,
+                        p.state
+                    FROM "order" p
+                    INNER JOIN "orderLine" lp ON p.id = lp.id_order
                     INNER JOIN articles a ON lp.id_article = a.id
-                    INNER JOIN users u ON o.id_user = u.email
-                    WHERE u.email = :email
-                    GROUP BY o.id, u.email
-                    ORDER BY o.date desc """
-        data = (email,)
+                    INNER JOIN users u ON p.id_user = u.email
+                '''
+        if user['rol'] != 'Administrator':
+            query += ' WHERE u.email = %s'
+        query += 'GROUP BY p.id, u.email ORDER BY p.date desc'
+        data = (user['email'],)
         cur.execute(query, data)
         response = cur.fetchall()
 
@@ -311,6 +312,24 @@ def add_product(product, id_stripe):
         query = ''' INSERT INTO "articles" ("name", "description", "image", "price", "xti_activo", "category", "brand", "id_price_stripe")
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id'''
         data = (product['name'], product['description'], product['image'], product['price'], 'S', product['category'], product['brand'], id_stripe,)
+        cur.execute(query, data)
+        id_order = cur.fetchone()[0]
+        conexion.commit()
+        return id_order
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+def change_order_state(order_id, state):
+    try:
+        print('ctrl_shop - change_order_state - start')
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = ''' UPDATE "order" SET state = %s WHERE id = %s RETURNING id '''
+        data = (state, order_id,)
         cur.execute(query, data)
         id_order = cur.fetchone()[0]
         conexion.commit()
