@@ -16,6 +16,16 @@ def register_user():
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
 
+@users_bp.route('add_employee', methods=['POST'])
+def add_employee():
+    try:
+        print('🚀 add_employee - bp_users' )
+        employee = request.json.get('employee')
+        response = srv_users.add_employee(employee)
+        return jsonify({ 'message': response })
+    except BaseException as e:
+        return make_error(constants.HTTP_STATUS_500, message=e)
+
 
 @users_bp.route('update_send_direction', methods=['POST'])
 def update_send_direction():

@@ -41,6 +41,27 @@ def add_user(email, name, password):
             conexion.close()
             print('Conexión finalizada.')
 
+def add_employee(employee):
+    try:
+        conexion = db.get_engine()
+        cur = conexion.cursor()
+        query = 'INSERT INTO users (email, name, password, rol, xti_activo, province, direction, cp, phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        data = (employee['email'], employee['name'], User.generate_password_hash(employee['password']), constants.ROL.EMPLOYEE.value, constants.SI, employee['province'], employee['direction'], str(employee['cp']), str(employee['phone']),)
+        cur.execute(query, data)
+        conexion.commit()
+
+        if cur.rowcount > 0:
+            result = 'OK'
+        # Cierre de la comunicación con PostgreSQL
+        cur.close()
+        return result
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
 
 def update_send_direction(user):
     try:

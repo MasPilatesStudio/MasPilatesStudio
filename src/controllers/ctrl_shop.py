@@ -282,7 +282,7 @@ def get_orders(user):
                     INNER JOIN articles a ON lp.id_article = a.id
                     INNER JOIN users u ON p.id_user = u.email
                 '''
-        if user['rol'] != 'Administrator':
+        if user['rol'] != 'Administrator' and user['rol'] != 'Employee':
             query += ' WHERE u.email = %s'
         query += 'GROUP BY p.id, u.email ORDER BY p.date desc'
         data = (user['email'],)

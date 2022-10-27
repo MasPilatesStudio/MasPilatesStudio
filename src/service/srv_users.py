@@ -27,6 +27,14 @@ def register_user(user):
     if exist == False:
         return ctrl_users.add_user(user['email'], user['name'], user['password'])
 
+def add_employee(employee):
+    # Ver si el usuario ya existe
+    exist = ctrl_users.check_exists(employee['email'])
+    if exist == True:
+        return "El usuario ya existe"
+    if exist == False:
+        return ctrl_users.add_employee(employee)
+
 def update_send_direction(user):
     return ctrl_users.update_send_direction(user)
 
