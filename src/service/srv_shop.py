@@ -66,7 +66,7 @@ def add_order(email, products):
             return str(e)
 
 def add_product(product):
-    response = ctrl_shop.add_product(product, response['default_price'])
+    response = ctrl_shop.add_product(product)
     return response
 
 def change_order_state(order_id, state):

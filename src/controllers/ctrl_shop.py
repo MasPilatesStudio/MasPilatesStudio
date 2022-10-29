@@ -304,18 +304,22 @@ def get_orders(user):
             conexion.close()
             print('Conexión finalizada.')
 
-def add_product(product, id_stripe):
+def add_product(product):
     try:
         print('ctrl_shop - add_product - start')
         conexion = db.get_engine()
         cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = ''' INSERT INTO "articles" ("name", "description", "image", "price", "xti_activo", "category", "brand", "id_price_stripe")
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id'''
-        data = (product['name'], product['description'], product['image'], product['price'], 'S', product['category'], product['brand'], id_stripe,)
+        query = ''' INSERT INTO "articles" ("name", "description", "price", "xti_activo", "category", "brand")
+                    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id '''
+        data = (product['name'], product['description'], product['price'], 'S', product['category'], product['brand'],)
         cur.execute(query, data)
-        id_order = cur.fetchone()[0]
+        id_product = cur.fetchone()[0]
+
+        query = ''' UPDATE "articles" SET image = %s WHERE id = %s'''
+        data = (str(id_product) + '.png', id_product,)
+        cur.execute(query, data)
         conexion.commit()
-        return id_order
+        return id_product
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
