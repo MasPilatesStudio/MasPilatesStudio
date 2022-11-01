@@ -71,8 +71,8 @@ def pay_monthly_fee(email):
     if response == 'OK':
         try:
             intent = stripe.checkout.Session.create(
-                success_url='http://localhost:8080/#/',
-                cancel_url='http://localhost:8080/#/',
+                success_url='https://maspilatesstudio-front.herokuapp.com/#/',
+                cancel_url='https://maspilatesstudio-front.herokuapp.com/#/',
                 payment_method_types=['card'],
                 mode='payment',
                 line_items=[
