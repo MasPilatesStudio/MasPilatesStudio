@@ -3,12 +3,12 @@ import stripe
 
 stripe.api_key = 'sk_test_51L8UuqJgo7zTVCqcDcPNe68hbsuHs3d8gSsF2EbaeX0nms5O32lZA9pV73MJV2OOCueBL5tHKSoTtkiMnS3TAnFZ00n4X1M7Jx'
 
-def get_products(filters, current_page, per_page):
-    response = ctrl_shop.get_products(filters, current_page, per_page)
+def get_products(filters, current_page, per_page, user_rol):
+    response = ctrl_shop.get_products(filters, current_page, per_page, user_rol)
     return response
 
-def get_count_products():
-    response = ctrl_shop.get_count_products()
+def get_count_products(filters, user_rol):
+    response = ctrl_shop.get_count_products(filters, user_rol)
     return response
 
 def get_categories():
@@ -25,6 +25,10 @@ def get_shopping_cart(email):
 
 def delete_product(email, product):
     response = ctrl_shop.delete_product(email, product)
+    return response
+
+def disabled_product(xti_activo, product_id):
+    response = ctrl_shop.disabled_product(xti_activo, product_id)
     return response
 
 def get_count_shopping_cart(email):

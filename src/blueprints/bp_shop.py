@@ -13,16 +13,19 @@ def get_products():
         filters = request.json.get('filters')
         current_page = request.json.get('currentPage')
         per_page = request.json.get('perPage')
-        response = srv_shop.get_products(filters, current_page, per_page)
+        user_rol = request.json.get('userLogued')
+        response = srv_shop.get_products(filters, current_page, per_page, user_rol)
         return jsonify({ 'Items': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
 
-@shop_bp.route('get_count_products', methods=['GET'])
+@shop_bp.route('get_count_products', methods=['POST'])
 def get_count_products():
     try:
         print('🚀 get_count_products - bp_shop' )
-        response = srv_shop.get_count_products()
+        filters = request.json.get('filters')
+        user_rol = request.json.get('userLogued')
+        response = srv_shop.get_count_products(filters, user_rol)
         return jsonify({ 'Items': response })
     except BaseException as e:
         return make_error(constants.HTTP_STATUS_500, message=e)
@@ -112,6 +115,16 @@ def add_product():
         product = request.json.get('product')
         response = srv_shop.add_product(product)
         return jsonify({ 'message': response })
+    except Exception as e:
+        return str(e)
+
+@shop_bp.route('/disabled_product', methods=['POST'])
+def disabled_product():
+    try:
+        product_id = request.json.get('product_id')
+        xti_activo = request.json.get('xti_activo')
+        response = srv_shop.disabled_product(xti_activo, product_id)
+        return jsonify({ 'product': response })
     except Exception as e:
         return str(e)
 

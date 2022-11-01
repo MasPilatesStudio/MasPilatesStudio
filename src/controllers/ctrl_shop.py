@@ -2,11 +2,15 @@ import psycopg2
 import psycopg2.extras
 import db
 
-def get_products(filters, current_page, per_page):
+def get_products(filters, current_page, per_page, user_rol):
     try:
         conexion = db.get_engine()
         cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = '''SELECT * FROM articles WHERE xti_activo = 'S' '''
+        query = '''SELECT * FROM articles WHERE (xti_activo = 'S' '''
+        if user_rol is not None and user_rol != 'Client':
+            query += ''' OR xti_activo = 'N' )'''
+        else:
+            query += ')'
         if filters['category'] != '':
             query += ' AND category = \'' + filters['category'] + '\''
         if filters['search'] != '':
@@ -21,6 +25,7 @@ def get_products(filters, current_page, per_page):
         elif filters['order'] == None:
             query += ' ORDER BY id desc'
         query += ' LIMIT ' + str(per_page) + ' OFFSET ' + str(((current_page -1) * per_page) )
+        print(query)
         cur.execute(query)
         response = cur.fetchall()
 
@@ -39,11 +44,23 @@ def get_products(filters, current_page, per_page):
             conexion.close()
             print('Conexión finalizada.')
 
-def get_count_products():
+def get_count_products(filters, user_rol):
     try:
         conexion = db.get_engine()
         cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = '''SELECT COUNT(*) FROM articles WHERE xti_activo = 'S' '''
+        query = '''SELECT COUNT(*) FROM articles WHERE (xti_activo = 'S' '''
+        if user_rol is not None and user_rol['rol'] != 'Client':
+             query += ''' OR xti_activo = 'N') '''
+        else:
+            query += ')'
+        if filters['category'] != '':
+            query += ' AND category = \'' + filters['category'] + '\''
+        if filters['search'] != '':
+            query += ''' AND lower(name) LIKE '%''' + filters['search'].lower() + '''%' '''
+        if len(filters['brands']) > 0:
+            string_brands = "', '".join([str(elem) for elem in filters['brands']])
+            query += " AND (brand is null or brand in ('" + string_brands + "'))"
+        print(query)
         cur.execute(query)
         response = cur.fetchall()
 
@@ -318,6 +335,24 @@ def add_product(product):
         query = ''' UPDATE "articles" SET image = %s WHERE id = %s'''
         data = (str(id_product) + '.png', id_product,)
         cur.execute(query, data)
+        conexion.commit()
+        return id_product
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+def disabled_product(xti_activo, product_id):
+    try:
+        print('ctrl_shop - change_order_state - start')
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = ''' UPDATE "articles" SET xti_activo = %s WHERE id = %s RETURNING id '''
+        data = (xti_activo, product_id,)
+        cur.execute(query, data)
+        id_product = cur.fetchone()[0]
         conexion.commit()
         return id_product
     except (Exception, psycopg2.DatabaseError) as error:
