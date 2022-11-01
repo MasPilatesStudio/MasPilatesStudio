@@ -344,3 +344,21 @@ def change_order_state(order_id, state):
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
+
+
+def pay_monthly_fee(email):
+    try:
+        print('ctrl_shop - pay_monthly_fee - start')
+        conexion = db.get_engine()
+        cur = conexion.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = ''' UPDATE users SET pay_date = current_date WHERE email = %s '''
+        data = (email,)
+        cur.execute(query, data)
+        conexion.commit()
+        return 'OK'
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')

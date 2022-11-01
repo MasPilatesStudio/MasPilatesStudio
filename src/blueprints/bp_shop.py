@@ -125,3 +125,12 @@ def change_order_state():
     except Exception as e:
         return str(e)
 
+@shop_bp.route('/pay_monthly_fee', methods=['POST'])
+def pay_monthly_fee():
+    try:
+        # Create a PaymentIntent with the order amount and currency
+        email = request.json.get('email')
+        response = srv_shop.pay_monthly_fee(email)
+        return jsonify({ 'response': response })
+    except Exception as e:
+        return str(e)

@@ -65,6 +65,29 @@ def add_order(email, products):
         except Exception as e:
             return str(e)
 
+def pay_monthly_fee(email):
+    response = ctrl_shop.pay_monthly_fee(email)
+    intent = None
+    if response == 'OK':
+        try:
+            intent = stripe.checkout.Session.create(
+                success_url='http://localhost:8080/#/',
+                cancel_url='http://localhost:8080/#/',
+                payment_method_types=['card'],
+                mode='payment',
+                line_items=[
+                {
+                    'name': 'Pago mensual',
+                    'quantity': 1,
+                    'currency': 'eur',
+                    'amount': round(float(35) * 100)
+                }]
+            )
+            print(intent)
+            return intent['url']
+        except Exception as e:
+            return str(e)
+
 def add_product(product):
     response = ctrl_shop.add_product(product)
     return response
