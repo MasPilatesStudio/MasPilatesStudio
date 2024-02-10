@@ -14,6 +14,10 @@ _Herramientas utilizadas para crear el proyecto_
 * [Stripe](https://stripe.com/es): Permite recibir pagos.
 * [Heroku](https://dashboard.heroku.com/): Para alojar la web y la base de datos.
 
+## Documentación
+- Puedes ver la memoria del proyecto [aquí](https://drive.google.com/file/d/1Qcip-wEXmZOWscJRFT_6wNrVfFCc4ULO/view?usp=sharing)
+- Presentación Canva [aquí](https://www.canva.com/design/DAFSaGGRuJY/_tmETgbU9QvMRpqyzGoghg/view?utm_content=DAFSaGGRuJY&utm_campaign=designshare&utm_medium=link&utm_source=editor)
+
 ## Ayuda, consultas e información
 Si requiere de ayuda acerca de este proyecto, puede usar responsablemente las herramientas, proporcionadas por la plataforma GitHub, para realizar su consulta o para obtener la información que necesites.
 
